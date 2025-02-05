@@ -63,6 +63,12 @@ export default function SearchBarDate({ onSearch }) {
                     sx: {
                         border: 'none',
                         backgroundColor: 'transparent',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'transparent',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'transparent',
+                        },
                     },
                 }}
                 sx={{
@@ -72,9 +78,11 @@ export default function SearchBarDate({ onSearch }) {
                         backgroundColor: 'transparent',
                         '&:hover .MuiOutlinedInput-notchedOutline': {
                             borderColor: 'transparent',
+                            border: 'none',
                         },
                         '& .MuiOutlinedInput-notchedOutline': {
                             borderColor: 'transparent',
+                            border: 'none',
                         },
                     },
                 }}
@@ -103,19 +111,28 @@ export default function SearchBarDate({ onSearch }) {
                                     backgroundColor: 'transparent',
                                     '&:hover .MuiOutlinedInput-notchedOutline': {
                                         borderColor: 'transparent',
+                                        border: 'none',
                                     },
                                     '& .MuiOutlinedInput-notchedOutline': {
                                         borderColor: 'transparent',
+                                        border: 'none',
                                     },
                                 },
                             },
                         },
                         inputAdornment: {
                             position: 'start',
-                          },
+                        },
                     }}
                 />
             </LocalizationProvider>
+
+            {/* Clear Date Button */}
+            {searchDate && (
+                <IconButton onClick={() => handleClear()}>
+                    <ClearIcon />
+                </IconButton>
+            )}
 
             {/* Search Button */}
             <Button

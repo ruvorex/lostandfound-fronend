@@ -1,10 +1,10 @@
 item_name,description,location,date_found,time_found,image_url,category,brand,status
-iPhone 14,A black iPhone 14 with a cracked screen.,SBM - C.421,2024-11-20,15:30:00,https://via.placeholder.com/300x160,Electronics,Apple,unclaimed
-Samsung Galaxy S22,"Samsung Galaxy S22, silver color, with a broken camera.",SBM - B.320,2024-11-21,11:45:00,https://via.placeholder.com/300x160,Electronics,Samsung,unclaimed
-Nike Air Max,"A pair of black Nike Air Max shoes, size 10.",SEG - S.434,2024-11-22,08:30:00,https://via.placeholder.com/300x160,Clothing,Nike,unclaimed
-Uniqlo Hoodie,Blue Uniqlo hoodie with a small tear on the sleeve.,SHSS - J.324,2024-11-23,10:00:00,https://via.placeholder.com/300x160,Clothing,Uniqlo,unclaimed
-Muji Notebook,"A Muji notebook with some notes in it, no cover damage.",SAS - P.523,2024-11-24,16:15:00,https://via.placeholder.com/300x160,Stationery,Muji,unclaimed
-Sony Headphones,"Sony noise-canceling headphones, with a slight dent.",SAS - Q.322,2024-11-25,12:30:00,https://via.placeholder.com/300x160,Electronics,Sony,unclaimed
+iPhone 14,A black iPhone 14 with a cracked screen.,SBM - C.421,2024-11-20,15:30:00,https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnM0c-COMT7sGjah2mkXkVnfkrQpyCnFIa4A&s,Electronics,Apple,unclaimed
+Samsung Galaxy S22,"Samsung Galaxy S22, silver color, with a broken camera.",SBM - B.320,2024-11-21,11:45:00,https://media.currys.biz/i/currysprod/How-To-Find-Lost-Stolen-Samsung-Phone-Header,Electronics,Samsung,unclaimed
+Nike Air Max,"A pair of black Nike Air Max shoes, size 10.",SEG - S.434,2024-11-22,08:30:00,https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2018%2F01%2Fa-closer-look-at-the-teal-nikes-air-max-270-releasing-air-max-day-001.jpg?q=75&w=800&cbr=1&fit=max,Clothing,Nike,unclaimed
+Uniqlo Hoodie,Blue Uniqlo hoodie with a small tear on the sleeve.,SHSS - J.324,2024-11-23,10:00:00,https://image.uniqlo.com/UQ/ST3/AsianCommon/imagesgoods/450189/item/goods_09_450189_3x4.jpg?width=288,Clothing,Uniqlo,unclaimed
+Muji Notebook,"A Muji notebook with some notes in it, no cover damage.",SAS - P.523,2024-11-24,16:15:00,https://swling.com/blog/wp-content/uploads/2020/11/Muji-Logging-Note-Pad-5.jpeg,Stationery,Muji,unclaimed
+Sony Headphones,"Sony noise-canceling headphones, with a slight dent.",SAS - Q.322,2024-11-25,12:30:00,https://img.lazcdn.com/g/p/c0c9d5647bba408051623f0285406bf2.jpg_960x960q80.jpg_.webp,Electronics,Sony,unclaimed
 Black Leather Wallet,A black leather wallet with identification cards inside.,SBM - C.321,2024-11-26,14:20:00,https://via.placeholder.com/300x160,Wallets & Pouches,Daiso,unclaimed
 Nike Sports Bag,A large Nike sports bag with some gym clothes inside.,SBM - D.325,2024-11-27,07:45:00,https://via.placeholder.com/300x160,Bags,Nike,unclaimed
 Samsung Charger,A Samsung charger with a frayed wire.,SDM - M.435,2024-11-28,17:10:00,https://via.placeholder.com/300x160,Accessories,Samsung,unclaimed

@@ -1,5 +1,5 @@
 import { Button, Container, Card, CardContent, CardActions, Stack, Typography, TextField } from "@mui/material"
-import CardTitle from "../components/CardTitle";
+import CardTitle from "../../components/CardTitle";
 import QuestionMarkIcon from '@mui/icons-material/QuestionMarkRounded';
 import { Link } from "react-router-dom";
 import HomeIcon from '@mui/icons-material/HomeRounded';
