@@ -111,7 +111,6 @@ export default function StaffMenu(props) {
                         <HomeRounded />
                     </ListItemIcon>
                     <ListItemText primary="Home Dashboard" sx={{marginRight: "2rem"}} />
-                    <Typography variant="caption" color="text.secondary">Ctrl + Alt + O</Typography>
                 </MenuItem>
                 <Divider />
                 

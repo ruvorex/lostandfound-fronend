@@ -184,7 +184,8 @@ export default function AdminHome() {
                 path: `/item/claim/${detailsId}`,
             });
             enqueueSnackbar('Item claimed successfully', { variant: 'success' });
-            handleGetItems();
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await handleGetItems();
         } catch (err) {
             console.error(err);
             enqueueSnackbar('Failed to claim item', { variant: 'error' });
@@ -202,7 +203,8 @@ export default function AdminHome() {
                 path: `/item/unclaim/${detailsId}`,
             });
             enqueueSnackbar('Item marked as unclaimed', { variant: 'success' });
-            handleGetItems();
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await handleGetItems();
         } catch (err) {
             console.error(err);
             enqueueSnackbar('Failed to unclaim item', { variant: 'error' });
@@ -220,7 +222,8 @@ export default function AdminHome() {
                 path: `/item/delete/${detailsId}`,
             });
             enqueueSnackbar('Item deleted successfully', { variant: 'success' });
-            handleGetItems();
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await handleGetItems();
         } catch (err) {
             console.error(err);
             enqueueSnackbar('Failed to delete item', { variant: 'error' });
@@ -307,6 +310,7 @@ export default function AdminHome() {
                 onClose={handleDetailsClose}
                 itemId={detailsId}
                 onUpdate={handleGetItems}
+                guestMode={false}
             />
 
             {/* Delete Confirmation Dialog */}

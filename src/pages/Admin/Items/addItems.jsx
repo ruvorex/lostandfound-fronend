@@ -12,13 +12,12 @@ import * as Yup from 'yup';
 import { useSnackbar } from 'notistack';
 import { post, get } from 'aws-amplify/api';
 
+
 const AddItems = () => {
   const [loading, setLoading] = useState(false);
   const [itemFiles, setItemFiles] = useState([]);
   const [itemFileUploads, setItemFileUploads] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
-  const [category, setCategory] = useState('');
-  const [brand, setBrand] = useState('');
   const [location, setLocation] = useState('');
   const [roomNumber, setRoomNumber] = useState('');
   const navigate = useNavigate()
@@ -81,8 +80,6 @@ const AddItems = () => {
       location: '',
       date_found: '',
       time_found: '',
-      category: '',
-      brand: '',
     },
     validationSchema: Yup.object({
       item_name: Yup.string().min(3).required('Item name is required'),
@@ -90,8 +87,6 @@ const AddItems = () => {
       location: Yup.string().required('Location is required'),
       date_found: Yup.date().required('Date found is required'),
       time_found: Yup.string().matches(/^\d{2}:\d{2}$/, "Time must be in HH:MM format"),
-      category: Yup.string().required('Category is required'),
-      brand: Yup.string()
     }),
 
     onSubmit: async (data) => {
@@ -108,8 +103,6 @@ const AddItems = () => {
       formData.append('location', combinedLocation);
       formData.append('date_found', data.date_found);
       formData.append('time_found', data.time_found);
-      formData.append('category', data.category);
-      formData.append('brand', data.brand);
 
       // Convert and append base64 images
       for (let file of itemFileUploads) {
@@ -156,14 +149,6 @@ const AddItems = () => {
 
   });
 
-  const handleCategoryChange = (event) => {
-    formik.setFieldValue('category', event.target.value);
-  };
-
-  const handleBrandChange = (event) => {
-    formik.setFieldValue('brand', event.target.value);
-  };
-
   const handleLocationChange = (event) => {
     formik.setFieldValue('location', event.target.value);
   };
@@ -176,7 +161,7 @@ const AddItems = () => {
     <Container maxWidth="xl" sx={{ marginTop: '1rem' }}>
       <Card sx={{ margin: 'auto' }}>
         <CardContent>
-        <Typography display={{ xs: "none", md: "flex" }} variant="h4" fontWeight={700} my={"1rem"}>Create an Item Found</Typography>
+          <Typography display={{ xs: "none", md: "flex" }} variant="h4" fontWeight={700} my={"1rem"}>Create an Item Found</Typography>
           <Grid container spacing={2}>
             {/* Left side - Product Information */}
             <Grid item xs={12} sm={6}>
@@ -276,46 +261,6 @@ const AddItems = () => {
                       helperText={formik.touched.time_found && formik.errors.time_found}
                       InputLabelProps={{ shrink: true }}
                     />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth>
-                      <InputLabel id="category-select-label">Category *</InputLabel>
-                      <Select
-                        labelId="category-select-label"
-                        id="category-select"
-                        value={formik.values.category}
-                        label="Category"
-                        onChange={handleCategoryChange}
-                      >
-                        <MenuItem value="Electronics">Electronics</MenuItem>
-                        <MenuItem value="Clothing">Clothing</MenuItem>
-                        <MenuItem value="Stationery">Stationery</MenuItem>
-                        <MenuItem value="Wallets & Pouches">Wallets & Pouches</MenuItem>
-                        <MenuItem value="Keys">Keys</MenuItem>
-                        <MenuItem value="Accessories">Accessories</MenuItem>
-                        <MenuItem value="Bags">Bags</MenuItem>
-                        <MenuItem value="Others">Others</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth>
-                      <InputLabel id="brand-select-label">Brand</InputLabel>
-                      <Select
-                        labelId="brand-select-label"
-                        id="brand-select"
-                        value={formik.values.brand}
-                        label="Brand"
-                        onChange={handleBrandChange}
-                      >
-                        <MenuItem value="Others">Others</MenuItem>
-                        <MenuItem value="Apple">Apple</MenuItem>
-                        <MenuItem value="Samsung">Samsung</MenuItem>
-                        <MenuItem value="Nike">Nike</MenuItem>
-                        <MenuItem value="Sony">Sony</MenuItem>
-                        <MenuItem value="Adidas">Adidas</MenuItem>
-                      </Select>
-                    </FormControl>
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <LoadingButton

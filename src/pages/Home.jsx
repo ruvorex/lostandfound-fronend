@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import LostFoundCard from "../components/LostFoundCard";
-import { FilterListRounded } from '@mui/icons-material';
+import { ArrowForwardRounded, CloseRounded, NotificationsActiveRounded, NotificationsOffRounded, CategoryRounded, FilterListRounded, CheckRounded } from '@mui/icons-material'
 import InfoIcon from '@mui/icons-material/Info';
 import {
   Box,
@@ -15,13 +15,20 @@ import {
   Checkbox,
   FormGroup,
   FormControlLabel,
-  Divider
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent, Stepper, Step, StepLabel, DialogContentText, TextField , DialogActions, Chip
 } from "@mui/material";
 import SearchBarDate from '../components/SearchBar_Date';
+import ItemDialog from '../components/ItemDialog';
 import { styled } from '@mui/system';
 import { enqueueSnackbar } from 'notistack';
-import { get} from 'aws-amplify/api';
-
+import { get, post } from 'aws-amplify/api'
+import { LoadingButton } from '@mui/lab'
+import { useSnackbar } from "notistack"
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 
 const Home = () => {
   const [items, setItems] = useState([]);
@@ -41,7 +48,137 @@ const Home = () => {
   });
   const [showNavbar, setShowNavbar] = useState(false);
   const [showPrompt, setShowPrompt] = useState(true);
+  const [subcribeCatergoryDialog, setSubcribeCategoryDialog] = useState(false)
+  const [subscribeStep, setSubscribeStep] = useState(0)
+  const [subscribeLoading, setSubscribeLoading] = useState(false)
+  const [emailCategory, setEmailCategory] = useState([])
+  const { enqueueSnackbar } = useSnackbar()
   const itemsRef = useRef(null);
+  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+  const [detailsId, setDetailsId] = useState(null);
+
+  const handleDetailsOpen = (id) => {
+      setDetailsId(id);
+      setDetailsDialogOpen(true);
+  }
+
+  const handleDetailsClose = () => {
+      setDetailsDialogOpen(false);
+  }
+
+  const subscribeFormik = useFormik({
+    initialValues: {
+      email: "",
+      emailCategoryIds: []
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().email("Invalid email address").required("E-mail is required"),
+    }),
+    onSubmit: async (data) => {
+      setSubscribeLoading(true)
+      data.email = data.email.trim()
+
+      var subReq = post({
+        apiName: "lostandfound",
+        path: "/subscriptions?email=" + data.email,
+        options: {
+          body: {
+            categoryIds: data.emailCategoryIds
+          }
+        }
+      })
+
+      try {
+        var res = await subReq.response
+        var data = await res.body.json()
+        setSubscribeLoading(false)
+        setSubscribeStep(2)
+      } catch (err) {
+        console.log(err)
+        enqueueSnackbar("Failed to subscribe to email categories", { variant: "error" })
+        setSubscribeLoading(false)
+      }
+    }
+  })
+
+  const confirmFormik = useFormik({
+    initialValues: {
+      code: ""
+    },
+    validationSchema: Yup.object({
+      code: Yup.string().required("Confirmation code is required")
+    }),
+    onSubmit: async (data) => {
+      setSubscribeLoading(true)
+      data.code = data.code.trim()
+      data.email = subscribeFormik.values.email
+
+      var subReq = get({
+        apiName: "lostandfound",
+        path: "/subscriptions/verify?email=" + data.email + "&token=" + data.code
+      })
+
+      try {
+        var res = await subReq.response
+        var data = await res.body.json()
+        setSubscribeLoading(false)
+        setSubscribeStep(3)
+      } catch (err) {
+        console.log(err)
+        enqueueSnackbar("Failed to verify subscription", { variant: "error" })
+        setSubscribeLoading(false)
+      }
+    }
+  })
+
+  const handleGetEmailCategories = async () => {
+    var itemReq = get({
+      apiName: "lostandfound",
+      path: "/category",
+    })
+
+    try {
+      var res = await itemReq.response
+      var data = await res.body.json()
+      setEmailCategory(data.category)
+    } catch (err) {
+      console.log(err)
+      enqueueSnackbar("Failed to load email categories", { variant: "error" })
+    }
+  }
+
+  const handleSubscribeCategoryClose = () => {
+    setSubscribeStep(0)
+    subscribeFormik.resetForm()
+    setSubscribeLoading(false)
+    setSubcribeCategoryDialog(false)
+  }
+
+  const handleSubscribeCategoryOpen = () => {
+    setSubcribeCategoryDialog(true)
+  }
+
+  const handleSubscribeCategoryNext = async () => {
+    setSubscribeLoading(true)
+
+    var subReq = get({
+      apiName: "lostandfound",
+      path: "/subscriptions?email=" + subscribeFormik.values.email
+    })
+
+    try {
+      var res = await subReq.response
+      var data = await res.body.json()
+      var subCategories = data.map((sub) => sub.categoryId)
+      subscribeFormik.setFieldValue("emailCategoryIds", subCategories)
+      setSubscribeLoading(false)
+      setSubscribeStep(1)
+    } catch (err) {
+      console.log(err)
+      enqueueSnackbar("Failed to load subscriptions", { variant: "error" })
+      setSubscribeLoading(false)
+    }
+  }
 
   const StyledTitle = styled(Typography)(({ theme }) => ({
     color: 'white',
@@ -73,6 +210,7 @@ const Home = () => {
       }
     };
     handleGetItems();
+    handleGetEmailCategories()
   }, []);
 
   const handleCategoryChange = (event) => setCategory(event.target.value);
@@ -234,7 +372,7 @@ const Home = () => {
       </Box>
 
       {showNavbar && (
-        <Container maxWidth="lg" sx={{ mt: 4 }} ref={itemsRef}>
+        <Container maxWidth="xl" sx={{ mt: 4 }} ref={itemsRef}>
           <Grid container spacing={2} sx={{ mt: 2 }}>
             <Grid item xs={3}>
               <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 2, p: 2, boxShadow: 1 }}>
@@ -268,6 +406,10 @@ const Home = () => {
                     <MenuItem value="Others">Others</MenuItem>
                   </Select>
                 </FormControl>
+
+                <Button variant="contained" startIcon={<ArrowForwardRounded />} onClick={handleSubscribeCategoryOpen} fullWidth >Subscribe to Categories</Button>
+
+                <Divider sx={{ my: 2 }} />
 
                 <Typography variant="subtitle1" sx={{ mb: 2 }}>
                   Location Lost
@@ -318,6 +460,7 @@ const Home = () => {
                         description={item.description}
                         location={item.location}
                         dateFound={item.date_found}
+                        onViewDetails={() => handleDetailsOpen(item.id)}
                       />
                     </Grid>
                   ))}
@@ -353,6 +496,120 @@ const Home = () => {
           </Typography>
         </Box>
       )}
+
+      <Dialog open={subcribeCatergoryDialog} maxWidth={"sm"} fullWidth onClose={handleSubscribeCategoryClose}>
+        <DialogTitle>Subscribe to Email Categories</DialogTitle>
+        <DialogContent>
+          <Stepper activeStep={subscribeStep} alternativeLabel>
+            <Step>
+              <StepLabel>Enter E-mail</StepLabel>
+            </Step>
+            <Step>
+              <StepLabel>Select Categories</StepLabel>
+            </Step>
+            <Step>
+              <StepLabel>Verify E-mail</StepLabel>
+            </Step>
+          </Stepper>
+        </DialogContent>
+        <Box display={subscribeStep == 0 ? "initial" : "none"}>
+          <DialogContent sx={{ paddingTop: 0 }}>
+            <DialogContentText>
+              Enter your e-mail address to subscribe to email categories. You will receive notifications when new items are added to the selected categories.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="email"
+              label="E-mail Address"
+              type="email"
+              name="email"
+              fullWidth
+              variant="standard"
+              value={subscribeFormik.values.email}
+              onChange={subscribeFormik.handleChange}
+              error={subscribeFormik.touched.email && Boolean(subscribeFormik.errors.email)}
+              helperText={subscribeFormik.touched.email && subscribeFormik.errors.email}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleSubscribeCategoryClose} startIcon={<CloseRounded />}>Cancel</Button>
+            <LoadingButton type="submit" loadingPosition="start" loading={subscribeLoading} variant="text" color="primary" startIcon={<ArrowForwardRounded />} onClick={handleSubscribeCategoryNext}>Next Step</LoadingButton>
+          </DialogActions>
+        </Box>
+        <Box display={subscribeStep == 1 ? "initial" : "none"}>
+          <DialogContent sx={{ paddingTop: 0 }}>
+            <DialogContentText>
+              Select the email categories you would like to subscribe to.
+            </DialogContentText>
+            <Select
+              sx={{ mt: "1rem" }}
+              multiple
+              fullWidth
+              value={subscribeFormik.values.emailCategoryIds}
+              onChange={(e) => subscribeFormik.setFieldValue("emailCategoryIds", e.target.value)}
+              renderValue={(selected) => (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {selected.map((value) => (
+                    <Chip icon={<CategoryRounded />} key={value} label={emailCategory.find((cat) => cat.id == value).name} />
+                  ))}
+                </Box>
+              )}
+            >
+              {emailCategory.map((cat) => (
+                <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+              ))}
+            </Select>
+            <Button sx={{ width: "100%", mt: "0.5rem" }} variant="secondary" startIcon={<NotificationsOffRounded />} onClick={() => subscribeFormik.setFieldValue("emailCategoryIds", [])}>
+              Unsubscribe from all...
+            </Button>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleSubscribeCategoryClose} startIcon={<CloseRounded />}>Cancel</Button>
+            <LoadingButton type="submit" loadingPosition="start" loading={subscribeLoading} variant="text" color="primary" startIcon={<ArrowForwardRounded />} onClick={subscribeFormik.handleSubmit}>Next Step</LoadingButton>
+          </DialogActions>
+        </Box>
+        <Box display={subscribeStep == 2 ? "initial" : "none"} component="form" onSubmit={confirmFormik.handleSubmit}>
+          <DialogContent sx={{ paddingTop: 0 }}>
+            <DialogContentText>
+              An e-mail verification has been sent to your mailbox.<br />Enter the code sent to your e-mail to confirm your subscription.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="code"
+              label="Confirmation Code"
+              type="text"
+              name="code"
+              fullWidth
+              variant="standard"
+              value={confirmFormik.values.code}
+              onChange={confirmFormik.handleChange}
+              error={confirmFormik.touched.code && Boolean(confirmFormik.errors.code)}
+              helperText={confirmFormik.touched.code && confirmFormik.errors.code}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleSubscribeCategoryClose} startIcon={<CloseRounded />}>Cancel</Button>
+            <LoadingButton type="submit" loadingPosition="start" loading={subscribeLoading} variant="text" color="primary" startIcon={<CheckRounded />}>Verify</LoadingButton>
+          </DialogActions>
+        </Box>
+        <Box display={subscribeStep == 3 ? "initial" : "none"}>
+          <DialogContent sx={{ paddingTop: 0 }}>
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+              <NotificationsActiveRounded sx={{ fontSize: "3rem" }} />
+              <DialogContentText sx={{ textAlign: "center", marginTop: "0.5rem" }}>
+                <Typography fontWeight={700}>Subscriptions have been set!</Typography>
+                <Typography>You will now receive notifications when new items are added to the selected email categories.</Typography>
+              </DialogContentText>
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleSubscribeCategoryClose} startIcon={<CloseRounded />}>Done</Button>
+          </DialogActions>
+        </Box>
+      </Dialog>
+      <ItemDialog open={detailsDialogOpen} onClose={handleDetailsClose} itemId={detailsId} guestMode />
     </Box>
   );
 };

@@ -58,7 +58,7 @@ export default function Navbar() {
             >
                 <List sx={{ width: "250px" }}>
                     <Box marginX={"1rem"} marginY={".5rem"}>
-                        <Typography variant="h6" fontWeight={700}>ReclaimIt</Typography>
+                        <Typography variant="h6" fontWeight={700}>Lost And Found</Typography>
                         <Typography variant="body">Navigation Menu</Typography>
                     </Box>
                     <Divider sx={{ marginBottom: 1 }} />
@@ -83,7 +83,7 @@ export default function Navbar() {
             >
                 <List sx={{ width: "250px" }}>
                     <Box marginX={"1rem"} marginY={".5rem"}>
-                        <Typography variant="h6" fontWeight={700}>ReclaimIt</Typography>
+                        <Typography variant="h6" fontWeight={700}>Lost And Found</Typography>
                         <Typography variant="body">Staff Panel</Typography>
                     </Box>
                     <Divider sx={{ my: 1 }} />

@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardMedia, Typography, Box, Button } from "@mui/material";
-import { Link } from "react-router-dom";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
-const LostFoundCard = ({ image, itemName, description, location, dateFound, contact }) => {
-  // Use state to toggle detailed view
+const LostFoundCard = ({ image, itemName, description, location, dateFound, onViewDetails }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   const handleToggleDescription = () => {
@@ -14,7 +12,6 @@ const LostFoundCard = ({ image, itemName, description, location, dateFound, cont
 
   const date = new Date(dateFound);
   const formattedDate = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
-
 
   return (
     <Card sx={{ maxWidth: 345, borderRadius: "12px", boxShadow: 3, height: 400 }}>
@@ -33,7 +30,7 @@ const LostFoundCard = ({ image, itemName, description, location, dateFound, cont
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            WebkitLineClamp: showFullDescription ? "none" : 3, 
+            WebkitLineClamp: showFullDescription ? "none" : 3,
           }}
           gutterBottom
         >
@@ -56,18 +53,17 @@ const LostFoundCard = ({ image, itemName, description, location, dateFound, cont
 
         {/* Button to view more details */}
         <Box mt={2}>
-          <Link to={`/item-details/${itemName}`}>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                textTransform: "none",
-                fontSize: "0.875rem",
-              }}
-            >
-              Click for More Details
-            </Button>
-          </Link>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onViewDetails}
+            sx={{
+              textTransform: "none",
+              fontSize: "0.875rem",
+            }}
+          >
+            Click for More Details
+          </Button>
         </Box>
       </CardContent>
     </Card>

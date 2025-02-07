@@ -10,7 +10,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { enqueueSnackbar } from 'notistack';
 
-export default function ItemDialog({ open, onClose, itemId, onUpdate }) {
+export default function ItemDialog({ open, onClose, itemId, guestMode }) {
     const [item, setItem] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -24,9 +24,8 @@ export default function ItemDialog({ open, onClose, itemId, onUpdate }) {
             description: '',
             location: '',
             found_at: '',
-            image_url: [],  // Store images in an array
+            image_url: [],  
             category: '',
-            brand: '',
             status: 'unclaimed',
         },
         validationSchema: Yup.object({
@@ -35,14 +34,13 @@ export default function ItemDialog({ open, onClose, itemId, onUpdate }) {
             location: Yup.string().required('Location is required'),
             found_at: Yup.string().required('Found date and time is required'),
             category: Yup.string().required('Category is required'),
-            brand: Yup.string(),
             status: Yup.string().oneOf(['unclaimed', 'claimed'], 'Invalid status').required('Status is required'),
         }),
         onSubmit: async (values) => {
             try {
                 setLoading(true);
-
                 const formData = new FormData();
+        
                 Object.entries(values).forEach(([key, value]) => {
                     if (key === 'image_url') {
                         value.forEach((img) => formData.append('image_url[]', img));
@@ -50,22 +48,29 @@ export default function ItemDialog({ open, onClose, itemId, onUpdate }) {
                         formData.append(key, value);
                     }
                 });
-
-                // Include uploaded files
+        
                 itemFileUploads.forEach((file) => formData.append('images', file));
-
-                console.log('Form data:', formData);
-
-                await put({
+        
+                console.log('Submitting updated form data to:', `/item/update/${itemId}`);
+                console.log('Form data being submitted:', values);
+        
+                const updateResponse = await put({
                     apiName: 'lostandfound',
                     path: `/item/update/${itemId}`,
                     options: { body: formData }
                 });
-
+        
+                console.log('Update response received:', updateResponse);
                 enqueueSnackbar('Item updated successfully', { variant: 'success' });
+        
+                // Optional delay to allow backend changes to propagate before fetching updated data
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+        
+                console.log("Fetching updated item details...");
+                await handleGetItem();  // Ensure this is correctly fetching by debugging inside
                 setEditMode(false);
-                handleGetItem();
             } catch (err) {
+                console.error('Error updating item:', err);
                 enqueueSnackbar('Failed to update item', { variant: 'error' });
             } finally {
                 setLoading(false);
@@ -79,6 +84,7 @@ export default function ItemDialog({ open, onClose, itemId, onUpdate }) {
             const req = get({ apiName: 'lostandfound', path: `/item/${itemId}` });
             const res = await req.response;
             const data = await res.body.json();
+
             setItemFileUploads([]);
             const item = data.item;
             const imageUrls = item.image_url ? JSON.parse(item.image_url) : [];
@@ -92,7 +98,6 @@ export default function ItemDialog({ open, onClose, itemId, onUpdate }) {
                 location: item.location,
                 found_at: new Date(item.found_at).toISOString().substring(0, 16),
                 category: item.category,
-                brand: item.brand || 'Others',
                 status: item.status,
                 image_url: imageUrls,
             });
@@ -105,6 +110,7 @@ export default function ItemDialog({ open, onClose, itemId, onUpdate }) {
             setLoading(false);
         }
     };
+
     useEffect(() => {
         if (open && itemId) {
             handleGetItem();
@@ -133,8 +139,10 @@ export default function ItemDialog({ open, onClose, itemId, onUpdate }) {
                         <CloseRounded />
                     </IconButton>
                     <Typography sx={{ ml: 2, flex: 1 }} variant="h6">Item Details</Typography>
-                    {!loading && !error && !editMode && (
-                        <Button onClick={() => setEditMode(true)} startIcon={<EditRounded />} color="inherit">Edit</Button>
+                    {!guestMode && !loading && !error && !editMode && (
+                        <Button onClick={() => setEditMode(true)} startIcon={<EditRounded />} color="inherit">
+                            Edit
+                        </Button>
                     )}
                     {editMode && (
                         <>
@@ -207,7 +215,7 @@ export default function ItemDialog({ open, onClose, itemId, onUpdate }) {
                             )}
                         </Grid>
 
-                        {/* Category, Brand, Status */}
+                        {/* Category */}
                         <Grid item xs={6}>
                             <Typography variant="body1" fontWeight={700}>Category</Typography>
                             {editMode ? (
@@ -225,23 +233,6 @@ export default function ItemDialog({ open, onClose, itemId, onUpdate }) {
                                 />
                             ) : (
                                 <Chip label={item.category} color="primary" />
-                            )}
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Typography variant="body1" fontWeight={700}>Brand</Typography>
-                            {editMode ? (
-                                <TextField
-                                    fullWidth
-                                    id="brand"
-                                    name="brand"
-                                    label="Brand"
-                                    value={formik.values.brand}
-                                    onChange={formik.handleChange}
-                                    size="small"
-                                    variant="outlined"
-                                />
-                            ) : (
-                                <Typography>{item.brand || 'N/A'}</Typography>
                             )}
                         </Grid>
                         <Grid item xs={6}>
