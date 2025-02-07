@@ -197,10 +197,12 @@ const Home = () => {
         });
         const res = await req.response;
         const data = await res.body.json();
-        const formattedData = data.items.map((item) => ({
-          ...item,
-          date_found: new Date(item.found_at).toLocaleDateString(),
-        }));
+        const formattedData = data.items
+          .filter((item) => item.status !== 'claimed') 
+          .map((item) => ({
+            ...item,
+            date_found: new Date(item.found_at).toLocaleDateString(),
+          }));
         console.log(formattedData)
         setItems(formattedData);
         setFilteredData(formattedData);
@@ -451,7 +453,7 @@ const Home = () => {
                     </Select>
                   </FormControl>
                 </Box>
-                <Grid container spacing={4}>
+                <Grid container spacing={4} sx={{ mb: 4 }}>
                   {filteredData.map((item, index) => (
                     <Grid item xs={12} sm={6} md={4} key={index}>
                       <LostFoundCard
