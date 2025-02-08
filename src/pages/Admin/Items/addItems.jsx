@@ -52,7 +52,7 @@ const AddItems = () => {
       // Optional: Read the file as a data URL to preview the base64 content
       const reader = new FileReader();
       reader.onloadend = () => {
-        console.log(`Base64 Content: ${reader.result.substring(0, 100)}...`);  // Logging first 100 characters
+        console.log(`Base64 Content: ${reader.result}`);  // Logging first 100 characters
       };
       reader.readAsDataURL(file);
     });
