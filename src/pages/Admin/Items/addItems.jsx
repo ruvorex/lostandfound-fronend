@@ -37,16 +37,31 @@ const AddItems = () => {
   const handleChangeItemImage = (e) => {
     const fileList = Array.from(e.target.files);
     const totalImages = itemFiles.length + fileList.length;
-
+  
     if (totalImages > 5) {
       enqueueSnackbar("You can only upload a maximum of 5 images.", { variant: "warning" });
       return;
     }
-
+  
+    fileList.forEach(file => {
+      // Log file information
+      console.log(`File Name: ${file.name}`);
+      console.log(`File Size: ${(file.size / 1024).toFixed(2)} KB`);
+      console.log(`File Type: ${file.type}`);
+  
+      // Optional: Read the file as a data URL to preview the base64 content
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        console.log(`Base64 Content: ${reader.result.substring(0, 100)}...`);  // Logging first 100 characters
+      };
+      reader.readAsDataURL(file);
+    });
+  
     setItemFiles(prevFiles => [...prevFiles, ...fileList.map(file => URL.createObjectURL(file))]);
     setItemFileUploads(prevFiles => [...prevFiles, ...fileList]);
     enqueueSnackbar("Successfully uploaded item pictures.", { variant: "success" });
   };
+  
 
   const handleDeleteImage = (index) => {
     const updatedFiles = [...itemFiles];
@@ -59,19 +74,6 @@ const AddItems = () => {
 
     enqueueSnackbar("Image deleted successfully.", { variant: "success" });
   };
-
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result.split(',')[1];
-        resolve(base64String);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
 
   const formik = useFormik({
     initialValues: {

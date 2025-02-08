@@ -121,34 +121,6 @@ export default function StaffMenu(props) {
                     <ListItemText primary="Add Found Item" />
                 </MenuItem>
             </Menu>
-            {/* <Menu
-                anchorEl={navbarAnchorEl}
-                open={isSettingsMenuOpen}
-                onClose={() => setIsSettingsMenuOpen(false)}
-                onClick={() => setIsSettingsMenuOpen(false)}
-                slotProps={menuSlotProps}
-            >
-                <MenuItem onClick={() => navigate("/staff/users")}>
-                    <ListItemIcon>
-                        <GroupRounded />
-                    </ListItemIcon>
-                    <ListItemText primary="Manage Users" sx={{marginRight: "2rem"}} />
-                    <Typography variant="caption" color="text.secondary">Ctrl + Alt + U</Typography>
-                </MenuItem>
-                <MenuItem onClick={() => navigate("/staff/users/create")}>
-                    <ListItemIcon>
-                        <PersonAddRounded />
-                    </ListItemIcon>
-                    <ListItemText primary="New User..." />
-                </MenuItem>
-                <Divider />
-                <MenuItem onClick={() => navigate("/about")}>
-                    <ListItemIcon>
-                        <InfoRounded />
-                    </ListItemIcon>
-                    <ListItemText primary="About ReclaimIt" />
-                </MenuItem>
-            </Menu> */}
         </>
 
     )
