@@ -15,7 +15,7 @@ This document details how to set up and run the frontend locally and deploy via 
 ### 1. Clone the Frontend Repository
 
 ```bash
-git clone https://github.com/ruvorex/lostandfound.git
+git clone https://github.com/ruvorex/lostandfound-frontend.git
 cd frontend-directory
 ```
 
